@@ -84,7 +84,7 @@ iface = gr.Interface(
         gr.Checkbox(value=True, label="Return Full Text"),
         gr.Slider(minimum=0.0, maximum=1.0, value=0.9, label="Top P"),
         gr.Slider(minimum=0.0, maximum=1.0, value=0.6, label="Temperature"),
-        gr.Slider(minimum=1, maximum=200, value=20, label="Max New Tokens"),
+        gr.Slider(minimum=1, maximum=1024, value=512, label="Max New Tokens"),
     ],
     
     outputs = [
