@@ -60,6 +60,7 @@ print(job.result()[0])
 
 results = {}
 correct = 0
+total = 0
 
 start = args.index
 end = min(start + args.offset, len(D))
@@ -67,6 +68,7 @@ end = min(start + args.offset, len(D))
 progess_bar = tqdm(range(start, end))
 
 for i in progess_bar:
+    total += 1
     pid, problem = D[i]
     answer = problem["answer"]
     options = problem["choices"]
@@ -95,7 +97,7 @@ for i in progess_bar:
     else:
         results["true_false"] = False
         
-    acc = correct / (i + 1) * 100
+    acc = correct / total * 100
     
     progess_bar.set_postfix(acc=f"{acc:.2f}%")
     
