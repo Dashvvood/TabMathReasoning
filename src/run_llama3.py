@@ -47,7 +47,7 @@ args = parser.parse_args()
 
 
 D = TabMWP(
-    problem_path="../data/tabmwp/problems_test.json",
+    problem_path="../data/tabmwp/problems_test1k.json",
     tab_img_path="../data/tabmwp/tables/",
 )
 
