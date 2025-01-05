@@ -1,5 +1,5 @@
 """
-python run_llama3.py --index 0 --offset 2 --output abc.json
+python run_llama3.py --index 0 --offset 2500 --output part1.json --url http://127.0.0.1:17701/
 """
 import json
 import os
@@ -51,7 +51,7 @@ D = TabMWP(
     tab_img_path="../data/tabmwp/tables/",
 )
 
-client = gradio_client.Client("http://127.0.0.1:7860/")
+client = gradio_client.Client(args.url)
 client.view_api()
 
 L = LlamaClient(client)
