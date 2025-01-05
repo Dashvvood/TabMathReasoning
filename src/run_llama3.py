@@ -55,7 +55,7 @@ client = gradio_client.Client(args.url)
 client.view_api()
 
 L = LlamaClient(client)
-job = L.submit("Hello", return_full_text=False, max_new_tokens=512)
+job = L.submit("Hello", return_full_text=False, max_new_tokens=512, top_p=1, do_sample=False)
 print(job.result()[0])
 
 results = {}
@@ -73,7 +73,7 @@ for i in progess_bar:
     unit = problem["unit"]
     prompt = D._get_prompt(pid)
 
-    job = L.submit(prompt, return_full_text=False, max_new_tokens=512)
+    job = L.submit(prompt, return_full_text=False, max_new_tokens=512, top_p=1, do_sample=False)
     output = job.result()[0]
     
     prediction = extract_prediction(output, options=options, option_inds=D.option_inds)
@@ -99,5 +99,5 @@ for i in progess_bar:
     
     progess_bar.set_postfix(acc=f"{acc:.2f}%")
     
-    with open("results.json", "a") as f:
+    with open(args.output, "a") as f:
         f.write(json.dumps(results) + "\n")
