@@ -89,10 +89,13 @@ class TabMWP(ProblemPromptMixin):
         tab_img_path, 
         shot_number=0,
         shot_pids=None,
+        prompt_format = "TQ-A",
+        option_inds = ["A", "B", "C", "D", "E", "F"],
     ):
         self.problem_path = problem_path
         self.tab_img_path = tab_img_path
-
+        self.option_inds = option_inds
+        self.prompt_format = prompt_format
         
         self.problems = json.load(open(problem_path))  # problem data
         self.pids = list(self.problems.keys())
@@ -113,25 +116,21 @@ class TabMWP(ProblemPromptMixin):
         tab_img = Image.open(os.path.join(self.tab_img_path, f'{pid}.png'))
         return np.array(tab_img)
     
-    def _get_prompt(self, 
-        pid,
-        option_inds: list = ["A", "B", "C", "D", "E", "F"],
-        prompt_format: str = "TQ-A",
-    ):
+    def _get_prompt(self, pid,):
         examples = []
         pids = self.shot_pids + [pid]
         
         for pid_ in pids:
             problem = self.problems[pid_]
             table = self.get_table_text(problem)
-            question = self.get_question_text(problem, option_inds)
+            question = self.get_question_text(problem, self.option_inds)
             answer = self.get_answer(problem)
             solution = self.get_solution_text(problem)
 
             test_example = (pid == pid_)
 
             example = self.create_one_example(
-                prompt_format, table, question, answer, solution, test_example
+                self.prompt_format, table, question, answer, solution, test_example
             )
             examples.append(example)
 
@@ -152,7 +151,7 @@ class TabMWP(ProblemPromptMixin):
     def __getitem__(self, idx):
         pid = self.pids[idx]
         problem = self.problems[pid]
-        return problem
+        return pid, problem
 
     @deprecated(reason="N/A")
     def _load_data(args):

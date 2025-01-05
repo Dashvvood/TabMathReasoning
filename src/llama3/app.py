@@ -96,4 +96,6 @@ iface = gr.Interface(
     description="Example Input: " + str(EXEMPLE_MESSAGE)
 )
 
+iface.queue()
+
 iface.launch(server_port=opts.port)
