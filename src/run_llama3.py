@@ -77,7 +77,7 @@ for i in progess_bar:
 
     job = L.submit(prompt, return_full_text=False, max_new_tokens=512, top_p=1, do_sample=False)
     output = job.result()[0]
-    
+
     prediction = extract_prediction(output, options=options, option_inds=D.option_inds)
     answer_norm = normalize_answer(answer, unit)
     prediction_norm = normalize_answer(prediction, unit)

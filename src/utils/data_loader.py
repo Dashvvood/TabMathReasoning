@@ -112,11 +112,11 @@ class TabMWP(ProblemPromptMixin):
         print("training question ids for prompting: ", self.shot_pids, "\n")
         
         
-    def _get_tab_img(self, pid):
+    def _get_tab_img_by_pid(self, pid):
         tab_img = Image.open(os.path.join(self.tab_img_path, f'{pid}.png'))
         return np.array(tab_img)
     
-    def _get_prompt(self, pid,):
+    def _get_prompt_by_pid(self, pid,):
         examples = []
         pids = self.shot_pids + [pid]
         
@@ -137,11 +137,14 @@ class TabMWP(ProblemPromptMixin):
         prompt_input = '\n\n'.join(examples)
         return prompt_input
     
-    def get_prompt_by_id(self, idx):
+    def _get_problem_by_pid(self, pid):
+        return self.problems[pid]
+    
+    def get_prompt_by_idx(self, idx):
         pid = self.pids[idx]
         return self._get_prompt(pid)
     
-    def get_img_by_id(self, idx):
+    def get_img_by_idx(self, idx):
         pid = self.pids[idx]
         return self._get_tab_img(pid)
     

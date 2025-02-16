@@ -176,3 +176,5 @@ data/
 checkpoints/
 *.ipynb
 *.json
+output/
+misc/
