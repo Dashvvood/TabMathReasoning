@@ -169,3 +169,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+ext/
+data/
+checkpoints/
+*.ipynb
+*.json
+output/
+misc/
