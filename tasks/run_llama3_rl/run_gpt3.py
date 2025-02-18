@@ -75,8 +75,8 @@ def get_result_file(args):
     result_path = f"{args.output_root}/{args.model}"
     os.makedirs(result_path, exist_ok=True)
 
-    result_file = "{}/{}_{}_{}_{}_seed_{}.json".format(result_path, args.label, args.test_split, args.prompt_format,
-                                                       args.shot_number, args.seed)
+    result_file = "{}/{}_{}_{}_{}_seed_{}_{}_{}.json".format(result_path, args.label, args.test_split, args.prompt_format,
+                                                       args.shot_number, args.seed, args.index, args.offset)
 
     return result_file
 
@@ -96,6 +96,11 @@ def save_results(result_file, acc, correct, count, cand_pids, args, results):
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--url', type=str, default='http://127.0.0.1:17701')
+    parser.add_argument("--index", type=int, default=0, help="Starting index for processing problems")
+    parser.add_argument("--offset", type=int, default=10, help="Number of problems to process")
+
+    
     parser.add_argument('--data_root', type=str, default='../data/tabmwp')
     parser.add_argument('--output_root', type=str, default='../results')
     parser.add_argument('--model', type=str, default='gpt3_rl')
@@ -121,7 +126,7 @@ def parse_args():
     parser.add_argument('--temperature', type=float, default=0.0)
     parser.add_argument('--max_tokens',
                         type=int,
-                        default=512,
+                        default=1024,
                         help='The maximum number of tokens allowed for the generated answer.')
     parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--frequency_penalty', type=float, default=0.0)
@@ -143,8 +148,10 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    client = LlamaClient(url="http://127.0.0.1:17701", template=TEMPLATE01)
+    
     args = parse_args()
+    
+    client = LlamaClient(url=args.url, template=TEMPLATE01)
     print('====Input Arguments====')
     print(json.dumps(vars(args), indent=2, sort_keys=False))
 
@@ -210,7 +217,7 @@ if __name__ == '__main__':
         cand_embedding = policy_model(cand_examples)
         # print("cand_embedding:", cand_embedding.shape)  # [cand_num x emb_size]
 
-        for i, pid in enumerate(pids):
+        for i, pid in enumerate(pids[args.index:args.index + args.offset]):
             count = i + 1  # number of current results
             problem = problems[pid]
             answer = problems[pid]['answer']
@@ -235,8 +242,10 @@ if __name__ == '__main__':
             else:
                 output = get_llama3_output(client, prompt, args)  # generate the output by GPT-3
 
+            raw_prediction = output.split("Answer: ")[-1].strip()
+            
             # the core prediction in the output
-            prediction = extract_prediction(output, options, args.option_inds)
+            prediction = extract_prediction(raw_prediction, options, args.option_inds)
 
             # normalize the number in the text
             answer_norm = normalize_answer(answer, unit)

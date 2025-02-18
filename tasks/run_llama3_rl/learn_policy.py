@@ -103,8 +103,10 @@ def get_batch_reward_loss(scores, cand_pids, pid_batch, option_batch, unit_batch
         # get the output from GPT-3
         output = get_llama3_output(client, prompt, args)
 
+        raw_prediction = output.split("Answer: ")[-1].strip()
+        
         # extract the prediction from the output
-        prediction = extract_prediction(output, option_batch[i], args.option_inds)
+        prediction = extract_prediction(raw_prediction, option_batch[i], args.option_inds)
 
         # normalize the number in the text
         prediction_norm = normalize_answer(prediction, unit_batch[i])
@@ -284,7 +286,7 @@ def parse_args():
     parser.add_argument('--temperature', type=float, default=0.0)
     parser.add_argument('--max_tokens',
                         type=int,
-                        default=512,
+                        default=1024,
                         help='The maximum number of tokens allowed for the generated answer.')
     parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--frequency_penalty', type=float, default=0.0)

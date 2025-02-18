@@ -93,9 +93,10 @@ iface = gr.Interface(
     ],
 
     title="Llama3 Text Generation",
-    description="Example Input: " + str(EXEMPLE_MESSAGE)
+    description="Example Input:\n" + str(EXEMPLE_MESSAGE)
 )
 
 iface.queue()
 
 iface.launch(server_port=opts.port)
+# app = iface.app

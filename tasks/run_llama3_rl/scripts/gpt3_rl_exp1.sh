@@ -35,10 +35,10 @@ python learn_policy.py \
 
 ## Inference w/ learned checkpoint (test)
 python run_gpt3.py \
---label exp1 \
+--label fs1 \
 --ckpt_root ../checkpoints \
 --model gpt3_rl \
---test_split test \
+--test_split test_1k \
 --test_number -1 \
 --shot_number 2 \
 --prompt_format TQ-SA \
@@ -46,5 +46,5 @@ python run_gpt3.py \
 --cand_number 20 \
 --embedding_size 128 \
 --model_config bert-base-uncased \
---ckpt exp1/ckpt_best_reward.pt \
+--ckpt fs1/ckpt_best_reward.pt \
 --gpu 0

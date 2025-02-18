@@ -1,4 +1,4 @@
-from .data_loader import TabMWP
+from .dataloader import TabMWP
 from .logger import Logger
 from .processing import (
     score_string_similarity, 
@@ -11,5 +11,4 @@ __all__ = [
     "score_string_similarity",
     "extract_prediction",
     "normalize_answer",
-    
 ]

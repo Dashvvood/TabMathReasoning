@@ -105,30 +105,34 @@ class TabMWP(ProblemPromptMixin):
             shot_pids = random.sample(self.pids, shot_number)  # random sample
         else:
             shot_pids = [str(pid) for pid in shot_pids]
-            for pid in shot_pids:
-                assert pid in self.pids  # check shot_pids
-                
+
         self.shot_pids = shot_pids
         print("training question ids for prompting: ", self.shot_pids, "\n")
         
         
-    def _get_tab_img_by_pid(self, pid):
+    def get_tab_img_by_pid(self, pid):
         tab_img = Image.open(os.path.join(self.tab_img_path, f'{pid}.png'))
-        return np.array(tab_img)
+        return tab_img
     
-    def _get_prompt_by_pid(self, pid,):
+    def get_prompt_by_pid(self, pid, trainD=None):
         examples = []
-        pids = self.shot_pids + [pid]
+        pids = self.shot_pids + [str(pid)]
         
         for pid_ in pids:
-            problem = self.problems[pid_]
-            table = self.get_table_text(problem)
-            question = self.get_question_text(problem, self.option_inds)
-            answer = self.get_answer(problem)
-            solution = self.get_solution_text(problem)
+            if pid_ not in self.problems.keys():
+                problem = trainD.problems[pid_]
+                table = trainD.get_table_text(problem)
+                question = trainD.get_question_text(problem, trainD.option_inds)
+                answer = trainD.get_answer(problem)
+                solution = trainD.get_solution_text(problem)
+            else:
+                problem = self.problems[pid_]
+                table = self.get_table_text(problem)
+                question = self.get_question_text(problem, self.option_inds)
+                answer = self.get_answer(problem)
+                solution = self.get_solution_text(problem)
 
             test_example = (pid == pid_)
-
             example = self.create_one_example(
                 self.prompt_format, table, question, answer, solution, test_example
             )
@@ -137,16 +141,17 @@ class TabMWP(ProblemPromptMixin):
         prompt_input = '\n\n'.join(examples)
         return prompt_input
     
-    def _get_problem_by_pid(self, pid):
-        return self.problems[pid]
-    
+    def get_problem_by_pid(self, pid):
+        return self.problems[str(pid)]
+
+
     def get_prompt_by_idx(self, idx):
         pid = self.pids[idx]
-        return self._get_prompt(pid)
+        return self._get_prompt_by_pid(pid)
     
     def get_img_by_idx(self, idx):
         pid = self.pids[idx]
-        return self._get_tab_img(pid)
+        return self.get_tab_img_by_pid(pid)
     
     def __len__(self):
         return len(self.pids)
